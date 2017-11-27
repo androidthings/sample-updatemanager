@@ -32,6 +32,7 @@ import android.widget.TextView;
 import com.google.android.things.update.StatusListener;
 import com.google.android.things.update.UpdateManager;
 import com.google.android.things.update.UpdateManagerStatus;
+import com.google.android.things.update.UpdatePolicy;
 
 import java.util.concurrent.TimeUnit;
 
@@ -62,7 +63,7 @@ public class UpdateActivity extends Activity implements StatusListener, OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_deferred_reboot);
+        setContentView(R.layout.activity_update);
 
         mStatus = findViewById(R.id.status);
         mPendingVersion = findViewById(R.id.pending_version);
@@ -77,7 +78,11 @@ public class UpdateActivity extends Activity implements StatusListener, OnClickL
         mUpdateManager = new UpdateManager();
         // Set the policy to apply but not reboot. If for some reason we aren't getting rebooted
         // by the alarms we set, fall back to something sensible, like 5 days.
-        mUpdateManager.setPolicy(UpdateManager.POLICY_APPLY_ONLY, 5L, TimeUnit.DAYS);
+        UpdatePolicy policy = new UpdatePolicy.Builder()
+                .setPolicy(UpdateManager.POLICY_APPLY_ONLY)
+                .setApplyDeadline(5L, TimeUnit.DAYS)
+                .build();
+        mUpdateManager.setPolicy(policy);
         // Start listening to UpdateManager.
         mUpdateManager.addStatusListener(this);
 
