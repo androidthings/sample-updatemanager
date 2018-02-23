@@ -56,7 +56,7 @@ public class DeviceRebootReceiver extends BroadcastReceiver {
         // a long time, you should use a Service instead of a BroadcastReceiver, and from there do
         // your work and reboot.
 
-        DeviceManager deviceManager = new DeviceManager();
+        DeviceManager deviceManager = DeviceManager.getInstance();
         // Add parameters if you want to reboot differently than normal.
         deviceManager.reboot();
     }

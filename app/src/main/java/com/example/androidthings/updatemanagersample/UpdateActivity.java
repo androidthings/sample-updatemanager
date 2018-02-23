@@ -75,7 +75,7 @@ public class UpdateActivity extends Activity implements StatusListener, OnClickL
         mRestartButton.setOnClickListener(this);
 
         mHandler = new Handler();
-        mUpdateManager = new UpdateManager();
+        mUpdateManager = UpdateManager.getInstance();
         // Set the policy to apply but not reboot. If for some reason we aren't getting rebooted
         // by the alarms we set, fall back to something sensible, like 5 days.
         UpdatePolicy policy = new UpdatePolicy.Builder()
