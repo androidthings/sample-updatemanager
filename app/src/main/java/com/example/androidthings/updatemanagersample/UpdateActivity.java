@@ -26,7 +26,11 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.things.update.StatusListener;
@@ -34,6 +38,8 @@ import com.google.android.things.update.UpdateManager;
 import com.google.android.things.update.UpdateManagerStatus;
 import com.google.android.things.update.UpdatePolicy;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -48,6 +54,9 @@ public class UpdateActivity extends Activity implements StatusListener, OnClickL
 
     private static final String TAG = "UpdateActivity";
 
+    private static final List<String> UPDATE_CHANNELS =
+            Arrays.asList("stable-channel", "beta-channel", "dev-channel", "canary-channel");
+
     private static final int DATE_FORMAT_FLAGS =
             DateUtils.FORMAT_ABBREV_MONTH | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME;
 
@@ -56,6 +65,7 @@ public class UpdateActivity extends Activity implements StatusListener, OnClickL
     private TextView mRebootMessage;
     private TextView mCheckButton;
     private Button mRestartButton;
+    private Spinner mChannelSpinner;
 
     private Handler mHandler;
     private UpdateManager mUpdateManager;
@@ -83,9 +93,28 @@ public class UpdateActivity extends Activity implements StatusListener, OnClickL
                 .setApplyDeadline(5L, TimeUnit.DAYS)
                 .build();
         mUpdateManager.setPolicy(policy);
+
+        // Set up the channel selector
+        mChannelSpinner = findViewById(R.id.channel_spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_list_item_1, android.R.id.text1, UPDATE_CHANNELS);
+        mChannelSpinner.setAdapter(adapter);
+        // Show the current channel
+        String channel = mUpdateManager.getChannel();
+        mChannelSpinner.setSelection(UPDATE_CHANNELS.indexOf(channel));
+        // Change the channel on selection
+        mChannelSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> spinner, View view, int position, long id) {
+                mUpdateManager.setChannel(UPDATE_CHANNELS.get(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> spinner) {}
+        });
+
         // Start listening to UpdateManager.
         mUpdateManager.addStatusListener(this);
-
         // Adding a listener doesn't call back with the current status, so poll for it once.
         UpdateManagerStatus status = mUpdateManager.getStatus();
         // Display the current version.
@@ -123,6 +152,7 @@ public class UpdateActivity extends Activity implements StatusListener, OnClickL
     private void handleStatusUpdate(UpdateManagerStatus status) {
         Log.d(TAG, "handleStatusUpdate: " + status);
 
+        mChannelSpinner.setEnabled(false);
         mCheckButton.setEnabled(false);
         mRestartButton.setEnabled(false);
         mRebootMessage.setVisibility(View.GONE);
@@ -132,6 +162,7 @@ public class UpdateActivity extends Activity implements StatusListener, OnClickL
             case UpdateManagerStatus.STATE_IDLE:
                 mStatus.setText(R.string.status_idle);
                 mCheckButton.setEnabled(true);
+                mChannelSpinner.setEnabled(true);
                 pendingVersionVisible = false;
                 break;
 

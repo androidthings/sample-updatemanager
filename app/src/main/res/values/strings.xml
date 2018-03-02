@@ -34,6 +34,7 @@
 
     <string name="reboot_message">Your device will restart automatically at %s.</string>
 
+    <string name="update_channel">Update channel:</string>
     <string name="check_now">Check now</string>
     <string name="restart_now">Restart now</string>
     <string name="restarting">Restarting...</string>
