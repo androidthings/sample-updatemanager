@@ -89,7 +89,7 @@ public class UpdateActivity extends Activity implements StatusListener, OnClickL
         // Set the policy to apply but not reboot. If for some reason we aren't getting rebooted
         // by the alarms we set, fall back to something sensible, like 5 days.
         UpdatePolicy policy = new UpdatePolicy.Builder()
-                .setPolicy(UpdateManager.POLICY_APPLY_ONLY)
+                .setPolicy(UpdatePolicy.POLICY_APPLY_ONLY)
                 .setApplyDeadline(5L, TimeUnit.DAYS)
                 .build();
         mUpdateManager.setPolicy(policy);
@@ -121,7 +121,7 @@ public class UpdateActivity extends Activity implements StatusListener, OnClickL
         TextView currentVersion = findViewById(R.id.current_version);
         currentVersion.setText(getString(R.string.current_version_info,
                 status.currentVersionInfo.androidThingsVersion,
-                status.currentVersionInfo.oemVersion));
+                status.currentVersionInfo.buildId));
         // Configure remaining UI based on status.
         handleStatusUpdate(status);
     }
@@ -200,7 +200,7 @@ public class UpdateActivity extends Activity implements StatusListener, OnClickL
             mPendingVersion.setVisibility(View.VISIBLE);
             mPendingVersion.setText(getString(R.string.pending_version_info,
                     status.pendingUpdateInfo.versionInfo.androidThingsVersion,
-                    status.pendingUpdateInfo.versionInfo.oemVersion));
+                    status.pendingUpdateInfo.versionInfo.buildId));
         } else {
             mPendingVersion.setVisibility(View.GONE);
         }
@@ -244,7 +244,7 @@ public class UpdateActivity extends Activity implements StatusListener, OnClickL
 
                 // If this returns false, there's already an update check in progress and the UI
                 // should update when we get the next status.
-                mUpdateManager.performUpdateNow(UpdateManager.POLICY_APPLY_ONLY);
+                mUpdateManager.performUpdateNow(UpdatePolicy.POLICY_APPLY_ONLY);
                 break;
 
             case R.id.btn_restart_now:
