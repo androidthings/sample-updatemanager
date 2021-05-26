@@ -6,6 +6,10 @@ new OTA updates every few hours and applies them automatically. This example sho
 you how to configure the update policy to allow an app to take more control over
 the update process and monitor progress.
 
+> **Note:** The Android Things Console will be turned down for non-commercial
+> use on January 5, 2022. For more details, see the
+> [FAQ page](https://developer.android.com/things/faq).
+
 ## Pre-requisites
 
 - Android Things compatible board
